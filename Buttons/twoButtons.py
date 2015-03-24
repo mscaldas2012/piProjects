@@ -32,32 +32,26 @@ state = 0
 ## initialize to 1 or increasing
 inc = 1
  
-## Set prev_input's initial value to 2
-prev_input=2
- 
 ## This while loop constantly looks for button input (presses)
 while True:
- 
     ## When state toggle button is pressed
     if ( GPIO.input(16) == True ):
         #logging.warning('button 1 pressed...')
         ## If increment is increasing, increase state by 1 each press
         if (inc == 1):
-            state = state + 1;
-            ## If increment is decreasing (0), decrease state by 1 each press
+            state +=  1;
+        ## If increment is decreasing (0), decrease state by 1 each press
         else:
-            state = state - 1;
+            state -=  1;
  
         ## Reached the max state, time to decrease state
         if (state == 3):
             inc = 0
-            prev_input=1 ## Keeps a reset button phrase from executing when state shifts down to 2
             #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
             #streamer.log("increment", inc) ## Stream increment when changed; "stream name", value
         ## Reached the min state, time to increase state
         elif (state == 0):
             inc = 1
-            prev_input=2 ## Makes all reset button phrases executable
             #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
             #streamer.log("increment", inc) ## Stream increment when changed
  
@@ -66,7 +60,6 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.HIGH) ## LED off
             GPIO.output(13, GPIO.HIGH) ## LED off
-            prev_input=2 ## Makes all reset button phrases executable
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
@@ -75,7 +68,6 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.LOW) ## LED on
             GPIO.output(13, GPIO.HIGH) ## LED off
-            prev_input=2 ## Makes all reset button phrases executable
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
@@ -102,12 +94,10 @@ while True:
     ## When reset button is pressed
     if ( GPIO.input(18) == True ):
         #logging.warning('reset Button pressed!')
-        ## If 1 or 2 LEDs are on
-        if (state == 1 or 2 and prev_input!=1):
+        if (inc == 1): #If light are going on... set them all on
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.LOW) ## LED on
             GPIO.output(13, GPIO.LOW) ## LED on
-            prev_input=1 ## Keeps this phrase from executing when all LEDs are already on
             state=3 ## Change state to 3
             inc=0 ## Change increment to decreasing
                 #streamer.log("state",state) ## Stream current state
@@ -115,30 +105,17 @@ while True:
                 #streamer.log("prev_input",prev_input) ## Stream current prev_input
             #streamer.log("phrase",1) ## used to see when each phrase was executing
             ## If no LEDs are on
-        elif (state == 0 and prev_input!=0):
-            GPIO.output(7, GPIO.LOW) ## LED on
-            GPIO.output(11, GPIO.LOW) ## LED on
-            GPIO.output(13, GPIO.LOW) ## LED on
-            prev_input=1 ## Keeps this phrase from executing immediately after the state is set to 0
-            state=3 ## Change state to 3
-            inc=0 ## Change increment to decreasing
+        else: # lights are going off... set them all off!
+            GPIO.output(7, GPIO.HIGH)## LED off
+            GPIO.output(11, GPIO.HIGH) ## LED off
+            GPIO.output(13, GPIO.HIGH) ## LED off
+            state=0 ## Change state to 3
+            inc=1 ## Change increment to decreasing
                 #streamer.log("state",state) ## Stream current state
                 #streamer.log("increment",inc) ## Stream current increment
                 #streamer.log("prev_input",prev_input) ## Stream current prev_input
             #streamer.log("phrase",2) ## used to see when each phrase was executing
             ## If all LEDs are on
-        elif (state == 3 and prev_input!=0):
-            GPIO.output(7, GPIO.HIGH) ## LED off
-            GPIO.output(11, GPIO.HIGH) ## LED off
-            GPIO.output(13, GPIO.HIGH) ## LED off
-            prev_input=0 ## Keeps this phrase from executing immediately after the state is set to 3
-            state=0 ## Change state to 0
-            inc=1 ## Change increment to increasing
-                #streamer.log("state",state) ## Stream current state
-                #streamer.log("increment",inc) ## Stream current increment
-                #streamer.log("prev_input",prev_input) ## Stream current prev_input
-                #streamer.log("phrase",3) ## used to see when each phrase was executing
- 
             #streamer.log("button_2(bullseye)", "pressed") ## Stream which button was pressed
         sleep(0.2); ## Wait 0.2 second before looking for another button input
             #streamer.close()
