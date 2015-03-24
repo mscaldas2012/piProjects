@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import RPi.GPIO as GPIO ## Import library that lets you control the Pi's GPIO pins from time import sleep ## Import time for delays
 from time import sleep ## Import time for delays
 import logging
@@ -20,9 +21,11 @@ GPIO.setup(18, GPIO.IN) ## Tells it that pin 18 (button) will be giving input
 GPIO.setup(7, GPIO.OUT) ## Tells it that pin 7 (LED) will be outputting
 GPIO.setup(11, GPIO.OUT) ## Tells it that pin 11 (LED) will be outputting
 GPIO.setup(13, GPIO.OUT) ## Tells it that pin 13 (LED) will be outputting
+GPIO.setup(15, GPIO.OUT)
 GPIO.output(7, GPIO.HIGH) ## Sets pin 7 (LED) to "HIGH" or off
 GPIO.output(11, GPIO.HIGH) ## Sets pin 11 (LED) to "HIGH" or off
 GPIO.output(13, GPIO.HIGH) ## Sets pin 13 (LED) to "HIGH" or off
+GPIO.output(15, GPIO.HIGH)
  
 ## state - decides what LED should be on and off
 ## initialize to 0 or all off
@@ -31,12 +34,12 @@ state = 0
 ## increment - the direction of states
 ## initialize to 1 or increasing
 inc = 1
- 
+logging.basicConfig(filename='example.log',level=logging.DEBUG)
 ## This while loop constantly looks for button input (presses)
 while True:
     ## When state toggle button is pressed
     if ( GPIO.input(16) == True ):
-        #logging.warning('button 1 pressed...')
+        logging.info('button 1 pressed...')
         ## If increment is increasing, increase state by 1 each press
         if (inc == 1):
             state +=  1;
@@ -45,7 +48,7 @@ while True:
             state -=  1;
  
         ## Reached the max state, time to decrease state
-        if (state == 3):
+        if (state == 4):
             inc = 0
             #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
             #streamer.log("increment", inc) ## Stream increment when changed; "stream name", value
@@ -60,6 +63,7 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.HIGH) ## LED off
             GPIO.output(13, GPIO.HIGH) ## LED off
+            GPIO.output(15, GPIO.HIGH)
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
@@ -68,6 +72,7 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.LOW) ## LED on
             GPIO.output(13, GPIO.HIGH) ## LED off
+            GPIO.output(15, GPIO.HIGH) 
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
@@ -76,14 +81,22 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.LOW) ## LED on
             GPIO.output(13, GPIO.LOW) ## LED on
+            GPIO.output(15, GPIO.HIGH)
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
         ## If the state equals anything other than 1, 2, or 3 (0)
+        elif (state == 4):
+            GPIO.output(7, GPIO.LOW) ## LED on
+            GPIO.output(11, GPIO.LOW) ## LED on
+            GPIO.output(13, GPIO.LOW) ## LED on
+            GPIO.output(15, GPIO.LOW)
         else:
             GPIO.output(7, GPIO.HIGH) ## LED off
             GPIO.output(11, GPIO.HIGH) ## LED off
             GPIO.output(13, GPIO.HIGH) ## LED off
+            GPIO.output(15, GPIO.HIGH) ## LED on
+
             #streamer.log("state",state) ## Stream current state
             #streamer.log("increment",inc) ## Stream current increment
             #streamer.log("prev_input",prev_input) ## Stream current prev_input
@@ -98,7 +111,8 @@ while True:
             GPIO.output(7, GPIO.LOW) ## LED on
             GPIO.output(11, GPIO.LOW) ## LED on
             GPIO.output(13, GPIO.LOW) ## LED on
-            state=3 ## Change state to 3
+            GPIO.output(15, GPIO.LOW)
+            state=4 ## Change state to 3
             inc=0 ## Change increment to decreasing
                 #streamer.log("state",state) ## Stream current state
                 #streamer.log("increment",inc) ## Stream current increment
@@ -109,6 +123,7 @@ while True:
             GPIO.output(7, GPIO.HIGH)## LED off
             GPIO.output(11, GPIO.HIGH) ## LED off
             GPIO.output(13, GPIO.HIGH) ## LED off
+            GPIO.output(15, GPIO.HIGH)
             state=0 ## Change state to 3
             inc=1 ## Change increment to decreasing
                 #streamer.log("state",state) ## Stream current state
