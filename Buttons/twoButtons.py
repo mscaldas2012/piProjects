@@ -2,7 +2,9 @@
 import RPi.GPIO as GPIO ## Import library that lets you control the Pi's GPIO pins from time import sleep ## Import time for delays
 from time import sleep ## Import time for delays
 import logging
-#
+
+import cwiid # wii remote stuff
+
  
 ## Import the ISStreamer module
 #from ISStreamer.Streamer import Streamer
@@ -30,16 +32,76 @@ GPIO.output(15, GPIO.HIGH)
 ## state - decides what LED should be on and off
 ## initialize to 0 or all off
 state = 0
+
+print 'Press button 1 + 2 on your Wii Remote...'
+sleep(1)
+
+wm=cwiid.Wiimote()
+print 'Wii Remote connected...'
+print '\nPress the PLUS button to disconnect the Wii and end the application'
+sleep(1)
+	
+Rumble = False
+wm.rpt_mode = cwiid.RPT_BTN
  
 ## increment - the direction of states
 ## initialize to 1 or increasing
 inc = 1
 logging.basicConfig(filename='example.log',level=logging.DEBUG)
+
+def toggle(state, inc):
+    logging.info('button pressed...')
+    
+        ## Define state 1
+    if (state == 1):
+        GPIO.output(7, GPIO.LOW) ## LED on
+        GPIO.output(11, GPIO.HIGH) ## LED off
+        GPIO.output(13, GPIO.HIGH) ## LED off
+        GPIO.output(15, GPIO.HIGH)
+            #streamer.log("state",state) ## Stream current state
+            #streamer.log("increment",inc) ## Stream current increment
+            #streamer.log("prev_input",prev_input) ## Stream current prev_input
+        ## Define state 2
+    elif (state == 2):
+        GPIO.output(7, GPIO.LOW) ## LED on
+        GPIO.output(11, GPIO.LOW) ## LED on
+        GPIO.output(13, GPIO.HIGH) ## LED off
+        GPIO.output(15, GPIO.HIGH) 
+            #streamer.log("state",state) ## Stream current state
+            #streamer.log("increment",inc) ## Stream current increment
+            #streamer.log("prev_input",prev_input) ## Stream current prev_input
+        ## Define state 3
+    elif (state == 3):
+        GPIO.output(7, GPIO.LOW) ## LED on
+        GPIO.output(11, GPIO.LOW) ## LED on
+        GPIO.output(13, GPIO.LOW) ## LED on
+        GPIO.output(15, GPIO.HIGH)
+            #streamer.log("state",state) ## Stream current state
+            #streamer.log("increment",inc) ## Stream current increment
+            #streamer.log("prev_input",prev_input) ## Stream current prev_input
+        ## If the state equals anything other than 1, 2, or 3 (0)
+    elif (state == 4):
+        GPIO.output(7, GPIO.LOW) ## LED on
+        GPIO.output(11, GPIO.LOW) ## LED on
+        GPIO.output(13, GPIO.LOW) ## LED on
+        GPIO.output(15, GPIO.LOW)
+    else:
+        GPIO.output(7, GPIO.HIGH) ## LED off
+        GPIO.output(11, GPIO.HIGH) ## LED off
+        GPIO.output(13, GPIO.HIGH) ## LED off
+        GPIO.output(15, GPIO.HIGH) ## LED on
+
+            #streamer.log("state",state) ## Stream current state
+            #streamer.log("increment",inc) ## Stream current increment
+            #streamer.log("prev_input",prev_input) ## Stream current prev_input
+ 
+            #streamer.log("button_1", "pressed") ## Stream which button was pressed
+    sleep(0.2); ## Wait 0.2 second before looking for another button input
+    
 ## This while loop constantly looks for button input (presses)
 while True:
     ## When state toggle button is pressed
-    if ( GPIO.input(16) == True ):
-        logging.info('button 1 pressed...')
+    if ( GPIO.input(16) == True or  wm.state['buttons'] == 8):
         ## If increment is increasing, increase state by 1 each press
         if (inc == 1):
             state +=  1;
@@ -50,7 +112,7 @@ while True:
         ## Reached the max state, time to decrease state
         if (state == 4):
             inc = 0
-            #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
+          #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
             #streamer.log("increment", inc) ## Stream increment when changed; "stream name", value
         ## Reached the min state, time to increase state
         elif (state == 0):
@@ -58,52 +120,7 @@ while True:
             #streamer.log("prev_input",prev_input) ## Stream prev_input when changed
             #streamer.log("increment", inc) ## Stream increment when changed
  
-        ## Define state 1
-        if (state == 1):
-            GPIO.output(7, GPIO.LOW) ## LED on
-            GPIO.output(11, GPIO.HIGH) ## LED off
-            GPIO.output(13, GPIO.HIGH) ## LED off
-            GPIO.output(15, GPIO.HIGH)
-            #streamer.log("state",state) ## Stream current state
-            #streamer.log("increment",inc) ## Stream current increment
-            #streamer.log("prev_input",prev_input) ## Stream current prev_input
-        ## Define state 2
-        elif (state == 2):
-            GPIO.output(7, GPIO.LOW) ## LED on
-            GPIO.output(11, GPIO.LOW) ## LED on
-            GPIO.output(13, GPIO.HIGH) ## LED off
-            GPIO.output(15, GPIO.HIGH) 
-            #streamer.log("state",state) ## Stream current state
-            #streamer.log("increment",inc) ## Stream current increment
-            #streamer.log("prev_input",prev_input) ## Stream current prev_input
-        ## Define state 3
-        elif (state == 3):
-            GPIO.output(7, GPIO.LOW) ## LED on
-            GPIO.output(11, GPIO.LOW) ## LED on
-            GPIO.output(13, GPIO.LOW) ## LED on
-            GPIO.output(15, GPIO.HIGH)
-            #streamer.log("state",state) ## Stream current state
-            #streamer.log("increment",inc) ## Stream current increment
-            #streamer.log("prev_input",prev_input) ## Stream current prev_input
-        ## If the state equals anything other than 1, 2, or 3 (0)
-        elif (state == 4):
-            GPIO.output(7, GPIO.LOW) ## LED on
-            GPIO.output(11, GPIO.LOW) ## LED on
-            GPIO.output(13, GPIO.LOW) ## LED on
-            GPIO.output(15, GPIO.LOW)
-        else:
-            GPIO.output(7, GPIO.HIGH) ## LED off
-            GPIO.output(11, GPIO.HIGH) ## LED off
-            GPIO.output(13, GPIO.HIGH) ## LED off
-            GPIO.output(15, GPIO.HIGH) ## LED on
-
-            #streamer.log("state",state) ## Stream current state
-            #streamer.log("increment",inc) ## Stream current increment
-            #streamer.log("prev_input",prev_input) ## Stream current prev_input
- 
-            #streamer.log("button_1", "pressed") ## Stream which button was pressed
-        sleep(0.2); ## Wait 0.2 second before looking for another button input
- 
+        toggle(state, inc) 
     ## When reset button is pressed
     if ( GPIO.input(18) == True ):
         #logging.warning('reset Button pressed!')
