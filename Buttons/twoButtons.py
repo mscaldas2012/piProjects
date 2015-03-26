@@ -14,7 +14,7 @@ import logging
 # streamer = Streamer(bucket_name="Double Button LED", access_key="[Place Your Access Key Here]")
 
 
-wm = 0
+
 # Pin assignment - uses Physical numbering...
 LED_RED = 7
 LED_YELLOW = 11
@@ -25,6 +25,21 @@ LEDs = [LED_RED, LED_YELLOW, LED_GREEN, LED_BLUE]
 
 BUTTON_TOGGLE = 16
 BUTTON_RESET = 18
+
+
+def initWiiMote():
+    print 'Press button 1 + 2 on your Wii Remote...'
+    sleep(1)
+
+    wm = cwiid.Wiimote()
+    print 'Wii Remote connected...'
+    print '\nPress the PLUS button to disconnect the Wii and end the application'
+    sleep(1)
+
+    #    Rumble = False
+    wm.rpt_mode = cwiid.RPT_BTN
+
+    return wm
 
 
 #  state - decides what LED should be on and off
@@ -39,17 +54,6 @@ def init():
     for led in LEDs:
         GPIO.setup(led, GPIO.OUT)
         GPIO.output(led,  GPIO.HIGH)
-
-    print 'Press button 1 + 2 on your Wii Remote...'
-    sleep(1)
-
-    wm = cwiid.Wiimote()
-    print 'Wii Remote connected...'
-    print '\nPress the PLUS button to disconnect the Wii and end the application'
-    sleep(1)
-
-    #    Rumble = False
-    wm.rpt_mode = cwiid.RPT_BTN
 
     #  increment - the direction of states
     #  initialize to 1 or increasing
@@ -77,6 +81,7 @@ def toggle(state):
 
 def main():
     init()
+    wm = initWiiMote()
     state = 0
     inc = 1
     # This while loop constantly looks for button input (presses)
