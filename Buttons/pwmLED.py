@@ -10,17 +10,16 @@ LED_YELLOW = 11
 LED_GREEN = 13
 LED_BLUE = 15
 LEDs = [LED_RED, LED_YELLOW, LED_GREEN, LED_BLUE]
-pwm =[None, None, None, None]
+pwm =[]
 
 GPIO.setmode(GPIO.BOARD)
 
-i = 0
 for led in LEDs:
     GPIO.setup (led, GPIO.OUT)
-    pwm[i] = GPIO.PWM(led, 60)
-    pwm[i].start(0)
-    i +=1
-
+    p = GPIO.PWM(led, 60)
+    pwm.append(p)
+    p.start(0)
+   
 try:
     while True:
         for i in range(100):
