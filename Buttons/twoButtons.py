@@ -1,8 +1,9 @@
 # !/usr/bin/env python
 import RPi.GPIO as GPIO  # Import library that lets you control the Pi's GPIO pins from time import sleep
-import cwiid  # wii remote stuff
+# import cwiid  # wii remote stuff
 from time import sleep  # Import time for delays
 import logging
+from WiiRemote import WiiRemote
 
 
 # # Import the ISStreamer module
@@ -26,22 +27,6 @@ LEDs = [LED_RED, LED_YELLOW, LED_GREEN, LED_BLUE]
 BUTTON_TOGGLE = 16
 BUTTON_RESET = 18
 
-
-def initWiiMote():
-    print 'Press button 1 + 2 on your Wii Remote...'
-    sleep(1)
-
-    wm = cwiid.Wiimote()
-    print 'Wii Remote connected...'
-    print '\nPress the PLUS button to disconnect the Wii and end the application'
-    sleep(1)
-
-    #    Rumble = False
-    wm.rpt_mode = cwiid.RPT_BTN
-
-    return wm
-
-
 #  state - decides what LED should be on and off
 #  initialize to 0 or all off
 def init():
@@ -50,7 +35,6 @@ def init():
 
     GPIO.setup(BUTTON_TOGGLE, GPIO.IN)  # # Tells it that pin 16 (button) will be giving input
     GPIO.setup(BUTTON_RESET,  GPIO.IN)  # # Tells it that pin 18 (button) will be giving input
-
     for led in LEDs:
         GPIO.setup(led, GPIO.OUT)
         GPIO.output(led,  GPIO.HIGH)
@@ -66,11 +50,6 @@ def toggle(state):
     for led in LEDs:
         GPIO.output(led, state >= i)
         i += 1
-    # GPIO.output(LED_RED, state >= 1)
-    # GPIO.output(LED_YELLOW, state >= 2)
-    # GPIO.output(LED_GREEN, state >= 3)
-    # GPIO.output(LED_BLUE, state >= 4)
-
     # streamer.log("state",state) # Stream current state
     # streamer.log("increment",inc) # Stream current increment
     # streamer.log("prev_input",prev_input) # Stream current prev_input
@@ -81,14 +60,16 @@ def toggle(state):
 
 def main():
     init()
-    wm = initWiiMote()
+    remote = WiiRemote()
+    #wm.initWiiMote()
     state = 0
     inc = 1
+
     # This while loop constantly looks for button input (presses)
     try:
         while True:
             # When state toggle button is pressed
-            if GPIO.input(BUTTON_TOGGLE) or wm.state['buttons'] == 8:
+            if GPIO.input(BUTTON_TOGGLE) or remote.buttonAPressed():
                 # If increment is increasing, increase state by 1 each press
                 if inc == 1:
                     state += 1
@@ -109,16 +90,13 @@ def main():
 
                 toggle(state)
                 # When reset button is pressed
-            if GPIO.input(BUTTON_RESET):
+            if GPIO.input(BUTTON_RESET) or remote.buttonBPressed():
                 # logging.warning('reset Button pressed!')
                 for led in LEDs:
-                    GPIO.output(led, inc == 0)
-                # GPIO.output(LED_YELLOW, inc == 0)
-                # GPIO.output(LED_GREEN, inc == 0)
-                # GPIO.output(LED_BLUE, inc == 0)
+                    GPIO.output(led, inc != 0)
 
                 if inc == 1:  # If light are going on... set them all on
-                    state = 4  # Change state to 3
+                    state = 5  # Change state to 3
                     inc = 0  # Change increment to decreasing
                     # streamer.log("state",state) # Stream current state
                     # streamer.log("increment",inc) # Stream current increment
