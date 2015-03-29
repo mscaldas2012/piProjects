@@ -35,17 +35,17 @@ try:
         if remote.arrowDownPressed():
             freq -= freqDelta
             if freq < 0:
-		freq = 1
+                freq = 1
             changeFreq(freq)
         if remote.arrowLeftPressed():
             dutyCycle -= dutyCycleDelta
             if dutyCycle < 0:
-		dutyCycle = 0 
+                dutyCycle = 0
             changeDutyCycle(dutyCycle)
         if remote.arrowRightPressed():
             dutyCycle += dutyCycleDelta
             if dutyCycle > 100:
-		dutyCycle = 100
+                dutyCycle = 100
             changeDutyCycle(dutyCycle)
         time.sleep(0.2)
 except KeyboardInterrupt:
