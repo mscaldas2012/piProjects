@@ -11,10 +11,10 @@ class WiiRemote:
     button_plus = 4096
     button_home = 128
 
-    button_up = 2048
-    button_right = 512
-    button_down = 1024
-    button_left = 256
+    arrow_up = 2048
+    arrow_right = 512
+    arrow_down = 1024
+    arrow_left = 256
 
     wm = None
 
@@ -40,4 +40,17 @@ class WiiRemote:
 
     def buttonBPressed(self):
         return self.wm.state['buttons'] == WiiRemote.button_B
-            
+
+    def arrowUpPressed(self):
+        return self.wm.state['butons'] == WiiRemote.arrow_up
+
+    def arrowRightPressed(self):
+        return self.wm.state['butons'] == WiiRemote.arrow_right
+
+    def arrowDownPressed(self):
+        return self.wm.state['butons'] == WiiRemote.arrow_down
+
+    def arrowLeftPressed(self):
+        return self.wm.state['butons'] == WiiRemote.arrow_left
+
+
