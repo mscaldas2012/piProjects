@@ -1,8 +1,9 @@
 # !/usr/bin/env python
 import RPi.GPIO as GPIO
 from WiiRemote import WiiRemote
+import time
 
-LED = 7
+LED = 11
 freq = 50
 dutyCycle = 50
 
@@ -33,14 +34,20 @@ try:
             changeFreq(freq)
         if remote.arrowDownPressed():
             freq -= freqDelta
+            if freq < 0:
+		freq = 1
             changeFreq(freq)
         if remote.arrowLeftPressed():
             dutyCycle -= dutyCycleDelta
+            if dutyCycle < 0:
+		dutyCycle = 0 
             changeDutyCycle(dutyCycle)
         if remote.arrowRightPressed():
             dutyCycle += dutyCycleDelta
+            if dutyCycle > 100:
+		dutyCycle = 100
             changeDutyCycle(dutyCycle)
-
+        time.sleep(0.2)
 except KeyboardInterrupt:
     pass
 
