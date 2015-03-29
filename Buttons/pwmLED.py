@@ -5,23 +5,35 @@ __author__ = "Marcelo Caldas"
 import RPi.GPIO as GPIO
 import time
 
+LED_RED = 7
+LED_YELLOW = 11
+LED_GREEN = 13
+LED_BLUE = 15
+LEDs = [LED_RED, LED_YELLOW, LED_GREEN, LED_BLUE]
+pwm =[]
+
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup (7, GPIO.OUT)
 
-p = GPIO.PWM(7, 50)
-p.start(0)
-
+for led in LEDs:
+    GPIO.setup (led, GPIO.OUT)
+    p = GPIO.PWM(led, 60)
+    pwm.append(p)
+    p.start(0)
+   
 try:
     while True:
         for i in range(100):
-            p.ChangeDutyCycle(i)
+            for p in pwm:
+                p.ChangeDutyCycle(i)
             time.sleep(0.02)
         for i in range(100):
-            p.ChangeDutyCycle(100-i)
+            for p in pwm:
+                p.ChangeDutyCycle(100-i)
             time.sleep(0.02)
 
 except KeyboardInterrupt:
     pass
 
-p.stop()
+for p in pwm:
+    p.stop()
 GPIO.cleanup()
