@@ -34,7 +34,7 @@ try:
             changeFreq(freq)
         if remote.arrowDownPressed():
             freq -= freqDelta
-            if freq < 0:
+            if freq <= 0:
                 freq = 1
             changeFreq(freq)
         if remote.arrowLeftPressed():
