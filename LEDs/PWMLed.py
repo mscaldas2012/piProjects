@@ -16,6 +16,14 @@ class PWMLed:
         pwm = GPIO.PWM(pin, freq)
         pwm.start(dc)
 
+
+    def changeFrequency(self, freq):
+        self.pwm.ChangeFrequencyfreq)
+
+
+    def changeDutyCycle(self, dutyCycle):
+        self.pwm.ChangeDutyCycle(dutyCycle)
+
     def increaseFreq(self, delta):
         self.freq += delta
         print 'Freq changed to ' + str(self.freq)

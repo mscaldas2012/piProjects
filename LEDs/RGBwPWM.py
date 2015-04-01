@@ -8,6 +8,8 @@ import math
 # # Import the ISStreamer module
 from ISStreamer.Streamer import Streamer
 
+from PWMLed import PWMLed
+
 # # Streamer constructor, this will create a bucket called Double Button LED
 # # you'll be able to see this name in your list of logs on initialstate.com
 # # your access_key is a secret and is specific to you, don't share it!
@@ -19,26 +21,28 @@ red = 7
 green = 11
 blue = 12
 
-GPIO.setup(red, GPIO.OUT)
-GPIO.setup(green, GPIO.OUT)
-GPIO.setup(blue, GPIO.OUT)
+#GPIO.setup(red, GPIO.OUT)
+#GPIO.setup(green, GPIO.OUT)
+#GPIO.setup(blue, GPIO.OUT)
 
 Freq = 100  # Hz
 
 # setup all the colours
-RED = GPIO.PWM(red, Freq)  # Pin, frequency
-RED.start(0)  # Initial duty cycle of 0, so off
-GREEN = GPIO.PWM(green, Freq)
-GREEN.start(0)
-BLUE = GPIO.PWM(blue, Freq)
-BLUE.start(0)
-
+# RED = GPIO.PWM(red, Freq)  # Pin, frequency
+# RED.start(0)  # Initial duty cycle of 0, so off
+# GREEN = GPIO.PWM(green, Freq)
+# GREEN.start(0)
+# BLUE = GPIO.PWM(blue, Freq)
+# BLUE.start(0)
+RED = PWMLed(red, freq, 0)
+GREEN = PWMLed(green, freq, 0)
+BLUE = PWMLed(blue, freq, 0)
 
 def colour(r, g, b, on_time):
     # colour brightness range is 0-100
-    RED.ChangeDutyCycle(r)
-    GREEN.ChangeDutyCycle(g)
-    BLUE.ChangeDutyCycle(b)
+    RED.changeDutyCycle(r)
+    GREEN.changeDutyCycle(g)
+    BLUE.changeDutyCycle(b)
     streamer.log("red", r)
     streamer.log("green", g)
     streamer.log("blue", b)
@@ -70,9 +74,9 @@ except KeyboardInterrupt:
     pass
 
     # Stop all the PWM objects
-RED.stop()
-GREEN.stop()
-BLUE.stop()
+# RED.stop()
+# GREEN.stop()
+# BLUE.stop()
 
 # Tidy up and remaining connections.
 GPIO.cleanup()
