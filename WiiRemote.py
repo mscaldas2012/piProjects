@@ -22,10 +22,9 @@ class WiiRemote:
         print 'Press button 1 + 2 on your Wii Remote...'
         time.sleep(1)
 
-       
+
         self.wm = cwiid.Wiimote()
         print 'Wii Remote connected...'
-        #print '\nPress the PLUS button to disconnect the Wii and end the application'
         time.sleep(1)
 
         #    Rumble = False
@@ -34,7 +33,7 @@ class WiiRemote:
 
     def getButtonState(self):
         return self.wm.state['buttons']
-    
+
     def buttonAPressed(self):
         return self.wm.state['buttons'] == WiiRemote.button_A
 
@@ -42,15 +41,15 @@ class WiiRemote:
         return self.wm.state['buttons'] == WiiRemote.button_B
 
     def arrowUpPressed(self):
-        return self.wm.state['butons'] == WiiRemote.arrow_up
+        return self.wm.state['buttons'] == WiiRemote.arrow_up
 
     def arrowRightPressed(self):
-        return self.wm.state['butons'] == WiiRemote.arrow_right
+        return self.wm.state['buttons'] == WiiRemote.arrow_right
 
     def arrowDownPressed(self):
-        return self.wm.state['butons'] == WiiRemote.arrow_down
+        return self.wm.state['buttons'] == WiiRemote.arrow_down
 
     def arrowLeftPressed(self):
-        return self.wm.state['butons'] == WiiRemote.arrow_left
+        return self.wm.state['buttons'] == WiiRemote.arrow_left
 
 

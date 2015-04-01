@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 import RPi.GPIO as GPIO
 from WiiRemote import WiiRemote
+from PWMLed import PWMLed
 import time
 
 LED = 11
@@ -11,45 +12,22 @@ freqDelta = 5
 dutyCycleDelta = 5
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup (LED, GPIO.OUT)
-pwm = GPIO.PWM(LED, freq)
-pwm.start(dutyCycle)
-
+pwm = PWMLed(LED, freq, dutyCycle)
 remote = WiiRemote()
 
-
-def changeFreq(newFreq):
-    print 'Freq changed to ' + str(newFreq)
-    pwm.ChangeFrequency(newFreq)
-
-
-def changeDutyCycle(newDC):
-    print 'Duty Cycle changed to ' + str(newDC)
-    pwm.ChangeDutyCycle(newDC)
 
 try:
     while True:
         if remote.arrowUpPressed():
-            freq += freqDelta
-            changeFreq(freq)
+            pwm.increaseFreq(freqDelta)
         if remote.arrowDownPressed():
-            freq -= freqDelta
-            if freq <= 0:
-                freq = 1
-            changeFreq(freq)
+            pwm.decreaseFreq(freqDelta)
         if remote.arrowLeftPressed():
-            dutyCycle -= dutyCycleDelta
-            if dutyCycle < 0:
-                dutyCycle = 0
-            changeDutyCycle(dutyCycle)
+            pwm.decreaseDutyCycle(dutyCycleDelta)
         if remote.arrowRightPressed():
-            dutyCycle += dutyCycleDelta
-            if dutyCycle > 100:
-                dutyCycle = 100
-            changeDutyCycle(dutyCycle)
+            pwm.increaseDutyCycle(dutyCycleDelta)
         time.sleep(0.2)
 except KeyboardInterrupt:
     pass
 
-pwm.stop()
 GPIO.cleanup()
