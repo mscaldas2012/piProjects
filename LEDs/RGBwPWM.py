@@ -25,7 +25,7 @@ blue = 12
 #GPIO.setup(green, GPIO.OUT)
 #GPIO.setup(blue, GPIO.OUT)
 
-Freq = 100  # Hz
+freq = 100  # Hz
 
 # setup all the colours
 # RED = GPIO.PWM(red, Freq)  # Pin, frequency
@@ -50,9 +50,9 @@ def colour(r, g, b, on_time):
     time.sleep(on_time)
 
     # turn everything off
-    RED.ChangeDutyCycle(0)
-    GREEN.ChangeDutyCycle(0)
-    BLUE.ChangeDutyCycle(0)
+    RED.changeDutyCycle(0)
+    GREEN.changeDutyCycle(0)
+    BLUE.changeDutyCycle(0)
 
 
 def PosSinWave(amplitude, angle, frequency):
