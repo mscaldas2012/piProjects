@@ -1,21 +1,8 @@
 # !/usr/bin/env python
 import RPi.GPIO as GPIO  # Import library that lets you control the Pi's GPIO pins from time import sleep
-# import cwiid  # wii remote stuff
 from time import sleep  # Import time for delays
 import logging
 from WiiRemote import WiiRemote
-
-
-# # Import the ISStreamer module
-# from ISStreamer.Streamer import Streamer
-
-# # Streamer constructor, this will create a bucket called Double Button LED
-# # you'll be able to see this name in your list of logs on initialstate.com
-# # your access_key is a secret and is specific to you, don't share it!
-# streamer = Streamer(bucket_name="Double Button LED", access_key="[Place Your Access Key Here]")
-
-
-
 # Pin assignment - uses Physical numbering...
 LED_RED = 7
 LED_YELLOW = 11
@@ -38,9 +25,6 @@ def init():
     for led in LEDs:
         GPIO.setup(led, GPIO.OUT)
         GPIO.output(led,  GPIO.HIGH)
-
-    #  increment - the direction of states
-    #  initialize to 1 or increasing
     logging.basicConfig(filename='example.log', level=logging.DEBUG)
 
 
@@ -50,18 +34,12 @@ def toggle(state):
     for led in LEDs:
         GPIO.output(led, state >= i)
         i += 1
-    # streamer.log("state",state) # Stream current state
-    # streamer.log("increment",inc) # Stream current increment
-    # streamer.log("prev_input",prev_input) # Stream current prev_input
-
-    # streamer.log("button_1", "pressed") # Stream which button was pressed
     sleep(0.2)  # # Wait 0.2 second before looking for another button input
 
 
 def main():
     init()
     remote = WiiRemote()
-    #wm.initWiiMote()
     state = 0
     inc = 1
 
@@ -80,14 +58,9 @@ def main():
                 # Reached the max state, time to decrease state
                 if state == 4:
                     inc = 0
-                    # streamer.log("prev_input",prev_input) # Stream prev_input when changed
-                    # streamer.log("increment", inc) # Stream increment when changed; "stream name", value
                 # Reached the min state, time to increase state
                 elif state == 0:
                     inc = 1
-                    # streamer.log("prev_input",prev_input) # Stream prev_input when changed
-                    # streamer.log("increment", inc) # Stream increment when changed
-
                 toggle(state)
                 # When reset button is pressed
             if GPIO.input(BUTTON_RESET) or remote.buttonBPressed():
@@ -98,22 +71,12 @@ def main():
                 if inc == 1:  # If light are going on... set them all on
                     state = 5  # Change state to 3
                     inc = 0  # Change increment to decreasing
-                    # streamer.log("state",state) # Stream current state
-                    # streamer.log("increment",inc) # Stream current increment
-                    # streamer.log("prev_input",prev_input) # Stream current prev_input
-                    # streamer.log("phrase",1) # used to see when each phrase was executing
                     # If no LEDs are on
                 else:  # lights are going off... set them all off!
                     state = 0  # Change state to 3
                     inc = 1  # Change increment to decreasing
-                    # streamer.log("state",state) # Stream current state
-                    # streamer.log("increment",inc) # Stream current increment
-                    # streamer.log("prev_input",prev_input) # Stream current prev_input
-                    # streamer.log("phrase",2) # used to see when each phrase was executing
                     # If all LEDs are on
-                    # streamer.log("button_2(bullseye)", "pressed") # Stream which button was pressed
                 sleep(0.2)  # Wait 0.2 second before looking for another button input
-                # streamer.close()
     except KeyboardInterrupt:
         GPIO.cleanup()
 
