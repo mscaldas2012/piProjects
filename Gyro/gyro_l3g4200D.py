@@ -20,7 +20,7 @@ class L3G4200D:
     GYRO_X_DATA_LSB = 0x28
     GYRO_X_DATA_MSB = 0x29
     GYRO_Y_DATA_LSB = 0x28
-    GYRO_Y_DTATA_MSB = 0x29
+    GYRO_Y_DATA_MSB = 0x29
     GYRO_Z_DATA_LSB = 0x28
     GYRO_Z_DATA_MSB = 0x29
 
@@ -49,25 +49,27 @@ class L3G4200D:
     DLPF_10_1 = 0x05
     DLPF_5_1 = 0x06
 
-
-def __init__(self, addr):
-    self.address = addr
-    self.bus = smbus.SMBus(1)
-    self.bus.write_byte_data(addr, self.CTRL_1, 0x1F)
-    self.bus.write_byte_data(addr, self.CTRL_2, 0x08)
-    self.bus.write_byte_data(addr, self.CTRL_4, 0x80)
-    time.sleep(100)
+    address = None
 
 
-def getAxes(self):
-    gyro_x = readAxis(self.GYRO_X_DATA_MSB, self.GYRO_X_DATA_LSB)
-    gyro_y = readAxis(self.GYRO_Y_DATA_MSB, self.GYRO_Y_DATA_LSB)
-    gyro_z = readAxis(self.GYRO_Z_DATA_MSB, self.GYRO_Z_DATA_LSB)
-    return (gyro_x, gyro_y, gyro_z)
+    def __init__(self, addr):
+        self.address = addr
+        self.bus = smbus.SMBus(1)
+        self.bus.write_byte_data(addr, self.CTRL_1, 0x1F)
+        self.bus.write_byte_data(addr, self.CTRL_2, 0x08)
+        self.bus.write_byte_data(addr, self.CTRL_4, 0x80)
+        time.sleep(100)
 
 
-def readAxis(self, _msb, _lsb):
-    msb = self.bus.read_byte_data(self.address, _msb)
-    lsb = self.bus.read_byte_data(self.address, _lsb)
-    return ((msb << 8) | lsb)
+    def getAxes(self):
+        gyro_x = self.readAxis(self.GYRO_X_DATA_MSB, self.GYRO_X_DATA_LSB)
+        gyro_y = self.readAxis(self.GYRO_Y_DATA_MSB, self.GYRO_Y_DATA_LSB)
+        gyro_z = self.readAxis(self.GYRO_Z_DATA_MSB, self.GYRO_Z_DATA_LSB)
+        return (gyro_x, gyro_y, gyro_z)
+
+
+    def readAxis(self, _msb, _lsb):
+        msb = self.bus.read_byte_data(self.address, _msb)
+        lsb = self.bus.read_byte_data(self.address, _lsb)
+        return ((msb << 8) | lsb)
 
